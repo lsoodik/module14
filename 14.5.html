@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+</head>
+<body>
+  <form style="display:flex; flex-direction:column; max-width:180px;">
+    <label for "inputFirstValue">Введите номер страницы: </label>
+    <input id="inputFirstValue" type="text" name="value1" >
+    <label for "inputSecondValue">Введите лимит: </label>
+    <input id="inputSecondValue" type="text" name="value2" >
+  </form>
+    <button class="btn" style="margin: 10px 0;">Запрос</button>
+    <div id="container"></div>
+  <script>
+  const pageInput = document.getElementById('inputFirstValue');
+  const limitInput = document.getElementById('inputSecondValue');
+  const btn = document.querySelector('button');
+  const div = document.getElementById('container');
+  if (localStorage.getItem('page') && localStorage.getItem('limit')) {
+    pageInput.value = localStorage.getItem('page');
+    limitInput.value = localStorage.getItem('limit');
+    useRequest();
+  }
+  btn.addEventListener('click', function() {
+    useRequest();
+  });
+  function useRequest() {
+    const page = parseInt(pageInput.value);
+    const limit = parseInt(limitInput.value);
+    if ((page < 1 || page > 10) && (limit < 1 || limit > 10)){
+      div.innerHTML = 'Номер страницы и лимит вне диапазона от 1 до 10';
+      return;
+    }
+    if (page < 1 || page > 10) {
+      div.innerHTML = 'Номер страницы вне диапазона от 1 до 10';
+      return;
+    }
+    if (limit < 1 || limit > 10) {
+      div.innerHTML = 'Лимит вне диапазона от 1 до 10';
+      return;
+    }
+    localStorage.setItem('page', page);
+    localStorage.setItem('limit', limit);
+    fetch(`https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=${limit}`)
+      .then(response => response.json())
+      .then(data => {
+        div.innerHTML = '';
+        data.forEach(item => {
+          const image = document.createElement('img');
+          image.src = item.url;
+          div.appendChild(image);
+        });
+      })
+      .catch(error => {
+        console.log('Ошибка:', error);
+      });
+  }
+
+  </script>
+</body>
+</html>

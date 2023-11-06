@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+</head>
+<body>
+  <form style="display:flex; flex-direction:column; max-width:160px;">
+    <label for "inputFirstValue">Введите первое число: </label>
+    <input id="inputFirstValue" type="text" name="value1" >
+    <label for "inputSecondValue">Введите второе число: </label>
+    <input id="inputSecondValue" type="text" name="value2" >
+  </form>
+    <button class="btn" style="margin: 10px 0;">Проверить</button>
+    <div id="container"></div>
+  <script>
+    const div = document.querySelector("#container");
+    const btn = document.querySelector("button");
+    const useRequest = (value1, value2) => {
+      return fetch(`https://dummyimage.com/${value1}x${value2}/`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => { return json; })
+      .catch(() => { console.log('error') });
+    };
+    btn.addEventListener("click", async () => {
+      const value1 = document.querySelector('#inputFirstValue').value;
+      const value2 = document.querySelector('#inputSecondValue').value;
+        if ((value1 < 100 || value1 > 300) || (value2 < 100 || value2 > 300)){
+          div.innerHTML = 'одно из чисел вне диапазона от 100 до 300';
+        }else{
+          let apiData = await useRequest(value1, value2);
+          div.innerHTML = `<img src="${apiData.file}">`;
+        }
+    });
+  </script>
+</body>
+</html>
